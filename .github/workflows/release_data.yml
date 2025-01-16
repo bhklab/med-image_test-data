@@ -7,6 +7,9 @@ on:
   pull_request:
     branches: ["*"]
 
+permissions:
+  contents: write
+
 jobs:
   Run-Pipeline:
     runs-on: ubuntu-latest
@@ -23,11 +26,9 @@ jobs:
           cache: true
           locked: false # wont be the same because of the tag
 
-      - uses: actions/checkout@v3
-      - name: Create a Release
-        uses: elgohr/Github-Release-Action@v5
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        # if: startsWith(github.ref, 'refs/tags/')
         with:
-          title: MyReleaseMessage
-          workdir: ./test_data
+          files: |
+            ./test_data/*.csv
