@@ -8,6 +8,7 @@ version = "0.1.0"
 
 [tasks]
 csvs = "bash ./scripts/make_csvs.sh"
+tag = "bash ./scripts/tag.sh"
 
 [dependencies]
 python = ">=3.13.1,<3.14"
