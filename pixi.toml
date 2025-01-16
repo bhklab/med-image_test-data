@@ -10,6 +10,7 @@ version = "0.1.0"
 csvs = "bash ./scripts/make_csvs.sh"
 tag = "bash ./scripts/tag.sh"
 snake = "snakemake"
+clean = "rm -rf rawdata procdata"
 
 [dependencies]
 python = ">=3.12,<3.13"
