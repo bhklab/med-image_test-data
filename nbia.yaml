@@ -20,4 +20,9 @@ datasets:
     patients:
       - STS_001
       - STS_002
-   
+  4D-Lung:
+    patients:
+      - 113_HM10395 # 120 series... should find a way to subset to studies
+  NSCLC_Radiogenomics:
+    patients:
+      - R01-001
