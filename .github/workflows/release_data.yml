@@ -3,6 +3,8 @@ name: Release Data
 # only run on pushes to main or pull requests
 on:
   push:
+    branches:
+      - main
     tags:
       - "v*.*"
 
@@ -46,6 +48,8 @@ jobs:
           pixi run snake
 
       - name: Release
+        # This action creates a new release on GitHub
+        # only runs on tags
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
