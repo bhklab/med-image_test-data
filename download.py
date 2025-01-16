@@ -8,11 +8,14 @@ from nbiatoolkit.nbia import NBIAClient
 from rich import print
 from yaml import safe_load
 
-load_dotenv()
+if Path(".env").exists():
+    load_dotenv()
 
 NBIA_USERNAME = os.getenv("NBIA_USERNAME")
 NBIA_PASSWORD = os.getenv("NBIA_PASSWORD")
 
+if not NBIA_USERNAME or not NBIA_PASSWORD:
+    raise ValueError("NBIA_USERNAME or NBIA_PASSWORD not found in .env file")
 
 # %%
 yaml_file = Path().cwd() / "nbia.yaml"

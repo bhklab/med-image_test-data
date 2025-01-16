@@ -14,8 +14,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15 # Consider increasing timeout
 
+    env:
+      NBIA_USERNAME: ${{ secrets.NBIA_USERNAME }}
+      NBIA_PASSWORD: ${{ secrets.NBIA_PASSWORD }}
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Display environment variables
+        run: |
+          echo "NBIA_USERNAME is $NBIA_USERNAME"
+          if [ -z "$NBIA_PASSWORD" ]; then
+            echo "NBIA_PASSWORD is not set"
+          else
+            echo "NBIA_PASSWORD is set"
+          fi
 
       - name: Install Pixi
         uses: prefix-dev/setup-pixi@v0.8.1
