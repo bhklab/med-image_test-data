@@ -41,6 +41,10 @@ jobs:
           cache: true
           locked: false # wont be the same because of the tag
 
+      - name: Run Snakemake
+        run: |
+          pixi run snake
+
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
