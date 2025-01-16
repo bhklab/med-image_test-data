@@ -1,8 +1,4 @@
 datasets:
-  CC-Tumor-Heterogeneity:
-    patients:
-      - CCTH-B11
-      - CCTH-A01
   Vestibular-Schwannoma-SEG:
     patients:
       - VS-SEG-001
@@ -11,6 +7,19 @@ datasets:
     patients:
       - LUNG1-001
       - LUNG1-002
+  QIN-PROSTATE-Repeatability:
+    patients:
+      - PCAMPMRI-00001
+      - PCAMPMRI-00002
+  CC-Tumor-Heterogeneity:
+    patients:
+      - CCTH-A01
+      - CCTH-A02
+  # HNSCC-3DCT-RT: Need a login
+  Soft-tissue-Sarcoma:
+    patients:
+      - STS_001
+      - STS_002
   4D-Lung:
     patients:
       - 113_HM10395 # 120 series... should find a way to subset to studies
