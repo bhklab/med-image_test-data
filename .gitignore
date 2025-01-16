@@ -2,3 +2,9 @@
 # pixi environments
 .pixi
 *.egg-info
+
+.env
+rawdata
+procdata
+*.tar.gz
+.snakemake

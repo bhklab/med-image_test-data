@@ -1,0 +1,13 @@
+datasets:
+  CC-Tumor-Heterogeneity:
+    patients:
+      - CCTH-B11
+      - CCTH-A01
+  Vestibular-Schwannoma-SEG:
+    patients:
+      - VS-SEG-001
+      - VS-SEG-002
+  NSCLC-Radiomics:
+    patients:
+      - LUNG1-001
+      - LUNG1-002
