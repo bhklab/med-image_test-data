@@ -8,3 +8,5 @@ rawdata
 procdata
 *.tar.gz
 .snakemake
+logs
+metadata
