@@ -46,9 +46,9 @@ jobs:
 
       - name: Combine Markdown files
         run: |
-          # Combine all Markdown files into one
+          # Combine all Markdown files into one with a newline after each file's content
           combined_file="results/combined_summary.md"
-          find results -name "*_summary.md" -exec cat {} + > "$combined_file"
+          find results -name "*_summary.md" -exec sh -c 'cat {} && echo ""' \; > "$combined_file"
           echo "Combined Markdown written to $combined_file"
           cat "$combined_file"
 
