@@ -44,14 +44,6 @@ jobs:
         run: |
           pixi run snake
 
-      # - name: Combine Markdown files
-      #   run: |
-      #     # Combine all Markdown files into one with a newline after each file's content
-      #     combined_file="results/combined_summary.md"
-      #     find results -name "*_summary.md" -exec sh -c 'cat {} && echo ""' \; > "$combined_file"
-      #     echo "Combined Markdown written to $combined_file"
-      #     cat "$combined_file"
-
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -60,5 +52,3 @@ jobs:
             ./results/*.tar.gz
           body_path: results/combined_summary.md
           make_latest: true
-          # body: |
-          #   $(cat results/combined_summary.md)
