@@ -2,14 +2,26 @@
 configfile: "nbia.yaml"
 
 COLLECTION_NAMES = config["datasets"].keys()
-# COLLECTION_NAMES = list(COLLECTION_NAMES)[:1]
 
 rule all:
   input:
     expand("results/{collection}.tar.gz", collection=COLLECTION_NAMES),
     expand("results/{collection}_summary.md", collection=COLLECTION_NAMES)
-  shell:
-    "echo 'All done!'"
+  output:
+    report = "results/combined_summary.md"
+  run:
+    # use python to concatenate all the summary files, then sort by collection name
+    summaries = []
+    for collection in COLLECTION_NAMES:
+      with open(f"results/{collection}_summary.md") as summary:
+        summaries.append((collection, summary.read()))
+    
+    summaries.sort(key=lambda x: x[0])
+    
+    with open("results/combined_summary.md", "w") as combined_summary:
+      for collection, content in summaries:
+        combined_summary.write(content)
+        combined_summary.write("\n")
 
 rule compress:
   input:
