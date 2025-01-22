@@ -27,3 +27,21 @@ datasets:
   NSCLC_Radiogenomics:
     patients:
       - R01-001
+      - R01-039
+      - R01-050
+  Prostate-Anatomical-Edge-Cases:
+    patients:
+      - Prostate-AEC-001
+      - Prostate-AEC-002
+  LIDC-IDRI:
+    patients:
+      - LIDC-IDRI-0340
+      - LIDC-IDRI-0151
+  Mediastinal-Lymph-Node-SEG:
+    patients:
+      - case_0002
+      - case_0005
+  Adrenal-ACC-Ki67-Seg:
+    patients:
+      - Adrenal_Ki67_Seg_002
+      - Adrenal_Ki67_Seg_004
