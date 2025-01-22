@@ -23,7 +23,7 @@ rule compress:
     # uses --exclude to exclude the .snakemake_timestamp file (because we use the 'directory' function in snakemake)
     # then pipes the output to pigz to compress it
     """
-    tar --exclude='.snakemake_timestamp' -C procdata -cf - {wildcards.collection} | pigz -c > {output.gzip_dir}
+    tar --exclude='.snakemake_timestamp' -C procdata -cf - {wildcards.collection} | pigz -9 -c > {output.gzip_dir}
     """
 
 rule summarize_metadata:
@@ -49,9 +49,8 @@ rule unzip:
     # into the procdata directory
     # exec > >(tee -a logfile.log) 2> >(tee -a logfile.log >&2)
     """
-
     for zip_file in $(find {input.collection_dir} -name '*.zip'); do
-      RELATIVE_DIR=$(dirname "$zip_file")
+      RELATIVE_DIR=$(basename $(dirname "$zip_file"))
       FILENAME=$(basename "$zip_file" .zip)
       TARGET_DIR={output.unzip_dir}/"$RELATIVE_DIR"/"$FILENAME"
       mkdir -p "$TARGET_DIR"
