@@ -57,6 +57,8 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            ./procdata/*.tar.gz
-          body: |
-            $(cat results/combined_summary.md)
+            ./results/*.tar.gz
+          body_path: results/combined_summary.md
+          make_latest: true
+          # body: |
+          #   $(cat results/combined_summary.md)
