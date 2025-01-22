@@ -6,5 +6,8 @@
 .env
 rawdata
 procdata
+results
 *.tar.gz
 .snakemake
+logs
+metadata

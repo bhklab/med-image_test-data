@@ -1,61 +1,80 @@
-import os
-from pathlib import Path
-
-import pandas as pd
-from dotenv import load_dotenv
-from nbiatoolkit.nbia import NBIAClient
-from rich import print
 import asyncio
+import json
+import warnings
+from pathlib import Path
+from typing import TYPE_CHECKING
 
-load_dotenv()
+from nbiatoolkit.nbia import NBIAClient
+from nbiatoolkit.settings import Settings
+from rich import print
+
+if TYPE_CHECKING:
+    from snakemake.script import snakemake  # type: ignore
 
 
-NBIA_USERNAME = os.getenv("NBIA_USERNAME")
-NBIA_PASSWORD = os.getenv("NBIA_PASSWORD")
-client = NBIAClient(NBIA_USERNAME, NBIA_PASSWORD)
+# Suppress SyntaxWarning
+warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
-COLLECTION = snakemake.wildcards.collection
+async def download_multiple_series(
+    client: NBIAClient, SeriesInstanceUID: str
+) -> dict[str, bytes]:
+    data_task = client._downloadSeries(params={"SeriesInstanceUID": SeriesInstanceUID})
+    bytes_data = await data_task
+    return {SeriesInstanceUID: bytes_data}
 
-config = snakemake.config["datasets"][COLLECTION]
 
-print(config)
+async def main(client: NBIAClient, series_list: list, OUTPUT_DIR: Path):
+    tasks = []
+    for series in series_list:
+        zip_file = (
+            OUTPUT_DIR / series["PatientID"] / f"{series['SeriesInstanceUID']}.zip"
+        )
+        if zip_file.exists():
+            print(f"Skipping {zip_file.name}")
+            continue
+        tasks.append(download_multiple_series(client, series["SeriesInstanceUID"]))
 
-print(f"Downloading data for {COLLECTION}")
+    results = await asyncio.gather(*tasks)
 
-OUTPUT_DIR = Path(snakemake.output[0])
-series_list = []
+    for result in results:
+        for SeriesInstanceUID, zip_data in result.items():
+            series = next(
+                s for s in series_list if s["SeriesInstanceUID"] == SeriesInstanceUID
+            )
+            zip_file = OUTPUT_DIR / series["PatientID"] / f"{SeriesInstanceUID}.zip"
+            zip_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(zip_file, "wb") as f:
+                f.write(zip_data)
 
-for patient in config["patients"]:
-    params = {"PatientID": patient}
-    result = client.getSeries(params)
-    series_list.extend(result)
-print(f"Found {len(series_list)} series")
 
-async def download_multiple_series(SeriesInstanceUID: str) -> dict[str, bytes]:
-  data_task = client._downloadSeries(
-    params={"SeriesInstanceUID": SeriesInstanceUID}
-  )
-  bytes_data = await data_task
-  return {SeriesInstanceUID: bytes_data}
+if __name__ == "__main__":
+    COLLECTION = snakemake.wildcards.collection
+    config = snakemake.config["datasets"][COLLECTION]
+    METADATA_FILE = Path(snakemake.output["metadata_file"])
+    OUTPUT_DIR = Path(snakemake.output["collection_dir"])
 
-async def main():
-  tasks = []
-  for series in series_list:
-    zip_file = OUTPUT_DIR / series["PatientID"] / f"{series['SeriesInstanceUID']}.zip"
-    if zip_file.exists():
-      print(f"Skipping {zip_file.name}")
-      continue
-    tasks.append(download_multiple_series(series["SeriesInstanceUID"]))
+    # Your script logic here
+    settings = Settings()
+    client = NBIAClient(
+        username=settings.login.nbia_username,
+        password=settings.login.nbia_password,
+    )
 
-  results = await asyncio.gather(*tasks)
+    print(config)
 
-  for result in results:
-    for SeriesInstanceUID, zip_data in result.items():
-      series = next(s for s in series_list if s["SeriesInstanceUID"] == SeriesInstanceUID)
-      zip_file = OUTPUT_DIR / series["PatientID"] / f"{SeriesInstanceUID}.zip"
-      zip_file.parent.mkdir(parents=True, exist_ok=True)
-      with open(zip_file, "wb") as f:
-        f.write(zip_data)
+    print(f"Downloading data for {COLLECTION}")
 
-asyncio.run(main())
+    series_list = []
+
+    for patient in config["patients"]:
+        params = {"PatientID": patient}
+        result = client.getSeries(params)
+        series_list.extend(result)
+    print(f"Found {len(series_list)} series")
+
+    json_file_content = json.dumps(series_list, indent=4)
+    with METADATA_FILE.open("w") as f:
+        f.write(json_file_content)
+
+    asyncio.run(main(client, series_list, OUTPUT_DIR))

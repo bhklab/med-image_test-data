@@ -10,7 +10,7 @@ version = "0.1.0"
 csvs = "bash ./scripts/make_csvs.sh"
 tag = "bash ./scripts/tag.sh"
 snake = "snakemake"
-clean = "rm -rf rawdata procdata"
+clean = "rm -rf .snakemake rawdata procdata"
 
 [dependencies]
 python = ">=3.12,<3.13"
@@ -20,10 +20,10 @@ pyyaml = ">=6.0.2,<7"
 ipython = "*"
 jupyter = "*"
 rich = ">=13.9.4,<14"
-python-dotenv = ">=1.0.1,<2"
 pigz = ">=2.8,<3"
 snakemake = ">=8.27.1,<9"
+ruff = "*"
 
 [pypi-dependencies]
-nbia-toolkit = { git = "https://github.com/jjjermiah/nbia-toolkit.git", rev = "a0206b1b2e39a0a4fe157434acdbdee1c623c276" }
+nbia-toolkit = { git = "https://github.com/jjjermiah/nbia-toolkit.git", branch = "jjjermiah/full_refactor"}
 tcia_utils = "*"
