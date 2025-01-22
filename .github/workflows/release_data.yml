@@ -1,6 +1,5 @@
 name: Release Data
 
-# only run on pushes to main or pull requests
 on:
   push:
     branches:
@@ -15,7 +14,7 @@ permissions:
 jobs:
   Run-Pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 15 # Consider increasing timeout
+    timeout-minutes: 15
 
     env:
       NBIA_USERNAME: ${{ secrets.NBIA_USERNAME }}
@@ -23,9 +22,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Checkout repository
-        uses: actions/checkout@v3
 
       - name: Display environment variables
         run: |
@@ -42,17 +38,25 @@ jobs:
           environments: "default"
           pixi-version: v0.40.0
           cache: true
-          locked: false # wont be the same because of the tag
+          locked: false
 
       - name: Run Snakemake
         run: |
           pixi run snake
 
+      - name: Combine Markdown files
+        run: |
+          # Combine all Markdown files into one
+          combined_file="results/combined_summary.md"
+          find results -name "*_summary.md" -exec cat {} + > "$combined_file"
+          echo "Combined Markdown written to $combined_file"
+          cat "$combined_file"
+
       - name: Release
-        # This action creates a new release on GitHub
-        # only runs on tags
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             ./procdata/*.tar.gz
+          body: |
+            $(cat results/combined_summary.md)

@@ -6,7 +6,8 @@ COLLECTION_NAMES = config["datasets"].keys()
 
 rule all:
   input:
-    expand("results/{collection}.tar.gz", collection=COLLECTION_NAMES)
+    expand("results/{collection}.tar.gz", collection=COLLECTION_NAMES),
+    expand("results/{collection}_summary.md", collection=COLLECTION_NAMES)
   shell:
     "echo 'All done!'"
 
@@ -24,6 +25,14 @@ rule compress:
     """
     tar --exclude='.snakemake_timestamp' -C procdata -cf - {wildcards.collection} | pigz -c > {output.gzip_dir}
     """
+
+rule summarize_metadata:
+  input:
+    metadata_file = "metadata/{collection}.json"
+  output:
+    summary_file = "results/{collection}_summary.md"
+  script:
+    "workflow/scripts/summarize_metadata.py"
 
 rule unzip:
   input:
