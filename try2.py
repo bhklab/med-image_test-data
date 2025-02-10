@@ -153,39 +153,73 @@ def load_dicom_series_from_zip(zip_data: bytes) -> pydicom.dataset.FileDataset:
     return image
 
 # data = asyncio.run(client._downloadSeries(params = {"SeriesInstanceUID": series_list[0]}))
+def download_RTSTRUCTS():
+    for group_name, group in groups:
 
-for group_name, group in groups:
+        async def download_series(row: pd.Series):
+            file_path = Path("rawdata/rtstructs/") / row.Collection / f"{row.SeriesInstanceUID}.dcm"
+            if file_path.exists():
+                return file_path
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            data = await client._downloadSeries(params={"SeriesInstanceUID": row.SeriesInstanceUID})
+            dicom = load_dicom_series_from_zip(data)
+            dicom.save_as(file_path)
 
-    async def download_series(row: pd.Series):
-        file_path = Path("rawdata/rtstructs/") / row.Collection / f"{row.SeriesInstanceUID}.dcm"
-        if file_path.exists():
             return file_path
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        data = await client._downloadSeries(params={"SeriesInstanceUID": row.SeriesInstanceUID})
-        dicom = load_dicom_series_from_zip(data)
-        dicom.save_as(file_path)
-
-        return file_path
 
 
-    rtstructs = group[group["Modality"] == "RTSTRUCT"]
+        rtstructs = group[group["Modality"] == "RTSTRUCT"]
 
-    if rtstructs.empty:
-        client.progress_bar.console.print(f"[bold red]No RTSTRUCT series found in {group_name}")
-        continue
+        if rtstructs.empty:
+            client.progress_bar.console.print(f"[bold red]No RTSTRUCT series found in {group_name}")
+            continue
 
-    async def download_batch(batch):
-        tasks = [download_series(row) for idx, row in batch.iterrows()]
-        return await asyncio.gather(*tasks)
+        async def download_batch(batch):
+            tasks = [download_series(row) for idx, row in batch.iterrows()]
+            return await asyncio.gather(*tasks)
 
-    batch_size = 25
-    task = client.progress_bar.add_task(f"Downloading RTSTRUCTs from {group_name}", total=len(rtstructs))
-    for i in range(0, len(rtstructs), batch_size):
-        batch = rtstructs.iloc[i:i + batch_size]
-        paths = asyncio.run(download_batch(batch))
-        client.progress_bar.update(task, advance=len(paths))
+        batch_size = 25
+        task = client.progress_bar.add_task(f"Downloading RTSTRUCTs from {group_name}", total=len(rtstructs))
+        for i in range(0, len(rtstructs), batch_size):
+            batch = rtstructs.iloc[i:i + batch_size]
+            paths = asyncio.run(download_batch(batch))
+            client.progress_bar.update(task, advance=len(paths))
 
 
+def download_SEG():
+    for group_name, group in groups:
+        async def download_series(row: pd.Series):
+            file_path = Path("rawdata/seg/") / row.Collection / f"{row.SeriesInstanceUID}.dcm"
+            if file_path.exists():
+                return file_path
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            data = await client._downloadSeries(params={"SeriesInstanceUID": row.SeriesInstanceUID})
+            dicom = load_dicom_series_from_zip(data)
+            dicom.save_as(file_path)
+
+            return file_path
+
+
+        seg_series = group[group["Modality"] == "SEG"]
+
+        if seg_series.empty:
+            client.progress_bar.console.print(f"[bold red]No SEG series found in {group_name}")
+            continue
+
+        async def download_batch(batch):
+            tasks = [download_series(row) for idx, row in batch.iterrows()]
+            return await asyncio.gather(*tasks)
+        
+        batch_size = 25
+        task = client.progress_bar.add_task(f"Downloading SEGs from {group_name}", total=len(seg_series))
+        for i in range(0, len(seg_series), batch_size):
+            batch = seg_series.iloc[i:i + batch_size]
+            paths = asyncio.run(download_batch(batch))
+            client.progress_bar.update(task, advance=len(paths))
+
+if __name__ == "__main__":
+    # download_RTSTRUCTS()
+    download_SEG()
 
 # dicom = load_dicom_series_from_zip(data)
 

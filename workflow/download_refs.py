@@ -25,7 +25,6 @@ def load_json():
     with open(output_path, "r") as f:
         col_dict = json.load(f)
   else:
-  
     rootdir = Path.cwd()
     csvpath = rootdir / "rtstructs_with_ref_modality.csv"
     assert csvpath.exists(), f'File not found: {csvpath}'
