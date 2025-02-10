@@ -11,3 +11,5 @@ results
 .snakemake
 logs
 metadata
+med_image_net
+*.csv

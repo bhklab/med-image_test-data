@@ -27,3 +27,4 @@ ruff = "*"
 [pypi-dependencies]
 nbia-toolkit = { git = "https://github.com/jjjermiah/nbia-toolkit.git", branch = "jjjermiah/full_refactor"}
 tcia_utils = "*"
+# nbiatoolkit = { path = "../nbia-toolkit", editable = true}
