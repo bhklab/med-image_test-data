@@ -29,6 +29,15 @@ This project is just a snakemake pipeline that does the following:
    2. Download all the series into a 'rawdata' directory
 3. tar.gz each collection in the 'rawdata' directory into the `procdata` directory
 
+Create a `.env` file like:
+
+```
+NBIA_USERNAME=""
+NBIA_PASSWORD=""
+```
+
+Then:
+
 ```bash
 pixi run snake
 ```
