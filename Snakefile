@@ -53,7 +53,7 @@ rule all:
     # use python to concatenate all the summary files, then sort by collection name
     summaries = []
     for collection in COLLECTION_NAMES:
-      with open(f"results/{collection}_summary.md") as summary:
+      with open(f"results/summaries/{collection}_summary.md") as summary:
         summaries.append((collection, summary.read()))
     
     summaries.sort(key=lambda x: x[0])
