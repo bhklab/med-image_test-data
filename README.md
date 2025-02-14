@@ -32,8 +32,8 @@ This project is just a snakemake pipeline that does the following:
 Create a `.env` file like:
 
 ```
-NBIA_USERNAME=""
-NBIA_PASSWORD=""
+LOGIN__NBIA_USERNAME=""
+LOGIN__NBIA_PASSWORD=""
 ```
 
 Then:
