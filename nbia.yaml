@@ -12,9 +12,10 @@ datasets:
       - PCAMPMRI-00001
       - PCAMPMRI-00002
   CC-Tumor-Heterogeneity:
+  # Causing some issues with the downloaded files
     patients:
       - CCTH-A01
-      - CCTH-A02
+      # - CCTH-A02
       # - CCTH-B11
   # HNSCC-3DCT-RT: Need a login
   Soft-tissue-Sarcoma:

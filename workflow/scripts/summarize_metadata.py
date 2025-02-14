@@ -26,11 +26,19 @@ header = (
     "| Patient ID           | Modality  | Number of Series    |\n"
     "|----------------------|-----------|---------------------|\n"
 )
-rows = [
-    f"| {patient_id:<20} | {modality:<9} | {count:<19} |"
-    for patient_id, modalities in summary.items()
-    for modality, count in modalities.items()
-]
+
+rows = []
+
+for patient_id, modalities in summary.items():
+    # write the patient_id in the first row
+    # the patient id in the other rows will be empty
+    for i, (modality, count) in enumerate(modalities.items()):
+        if i == 0:
+            rows.append(f"| {patient_id:<20} | {modality:<9} | {count:<19} |")
+        else:
+            rows.append(f"| {'':<20} | {modality:<9} | {count:<19} |")
+
+
 
 # Combine header and rows
 markdown_output = header + "\n".join(rows) + "\n"

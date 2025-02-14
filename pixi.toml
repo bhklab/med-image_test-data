@@ -9,7 +9,7 @@ version = "0.1.0"
 [tasks]
 csvs = "bash ./scripts/make_csvs.sh"
 tag = "bash ./scripts/tag.sh"
-snake = "snakemake  --show-failed-logs "
+snake = "snakemake  --show-failed-logs"
 clean = "rm -rf .snakemake rawdata procdata"
 
 [dependencies]
