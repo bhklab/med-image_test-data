@@ -45,3 +45,7 @@ datasets:
     patients:
       - Adrenal_Ki67_Seg_002
       - Adrenal_Ki67_Seg_004
+  ISPY2:
+    patients:
+      - ISPY2-102011 # 39 series
+      - ISPY2-111038 # 32 series
