@@ -252,7 +252,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/a7/b2/d872fc3d753516870d520595ddd8ce4dd44fa797a240999f125f58521ad7/matplotlib-3.10.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/e2/3f/f3aa833b29c724656e62ef35eaa967720169074f3ec09791e9bab8138933/med_imagetools-1.12.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d3/c8/529101d7176fe7dfe1d99604e48d69c5dfdcadb4f06561f465c8ef12b4df/multidict-6.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-      - pypi: git+https://github.com/jjjermiah/nbia-toolkit.git@ef3f2cb5d42f6c7df311ab92e022c7ab5a09bdfa
+      - pypi: git+https://github.com/jjjermiah/nbia-toolkit?branch=jjjermiah%2Ffull_refactor#0e68d5e600b4cc1771a6fcde7063ba5564455f38
       - pypi: https://files.pythonhosted.org/packages/b9/54/dd730b32ea14ea797530a4479b2ed46a6fb250f682a9cfb997e968bf0261/networkx-3.4.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/38/0d/84200ed6a871ce386ddc82904bfadc0c6b28b0c0ec78176871a4679e40b3/pillow-11.1.0-cp312-cp312-manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/e5/ae/580600f441f6fc05218bd6c9d5794f4aef072a7d9093b291f1c50a9db8bc/plotly-5.24.1-py3-none-any.whl
@@ -2224,7 +2224,7 @@ packages:
   - pkg:pypi/nbformat?source=hash-mapping
   size: 100945
   timestamp: 1733402844974
-- pypi: git+https://github.com/jjjermiah/nbia-toolkit.git@ef3f2cb5d42f6c7df311ab92e022c7ab5a09bdfa
+- pypi: git+https://github.com/jjjermiah/nbia-toolkit?branch=jjjermiah%2Ffull_refactor#0e68d5e600b4cc1771a6fcde7063ba5564455f38
   name: nbia-toolkit
   version: 1.3.1
   requires_dist:
