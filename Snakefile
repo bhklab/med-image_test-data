@@ -47,9 +47,6 @@ rule all:
     # replace NaN with empty string
     df.fillna("", inplace=True)
 
-    print(df)
-
-
     # use python to concatenate all the summary files, then sort by collection name
     summaries = []
     for collection in COLLECTION_NAMES:
@@ -69,21 +66,35 @@ rule all:
         combined_summary.write(content)
         combined_summary.write("\n")
 
-
-
 rule compress:
   input:
-    collection_dir = "procdata/{collection}"
+    collection_dir = "procdata/sorted/{collection}"
   output:
     gzip_dir = "results/{collection}.tar.gz"
   shell:
+    """
+    INPUT_DIR=$(dirname {input.collection_dir})
+    tar --exclude='.snakemake_timestamp' -C $INPUT_DIR -cf - {wildcards.collection} | pigz -9 -c > {output.gzip_dir}
+    """
     # this command will first tar the directory
     # uses -C to change to the directory
     # uses -cf to create a new tar file
     # uses --exclude to exclude the .snakemake_timestamp file (because we use the 'directory' function in snakemake)
     # then pipes the output to pigz to compress it
+
+rule dicomsort:
+  input: 
+    collection_dir = "procdata/unsorted/{collection}"
+  output:
+    sorted_dir = directory("procdata/sorted/{collection}")
+  shell:
     """
-    tar --exclude='.snakemake_timestamp' -C procdata -cf - {wildcards.collection} | pigz -9 -c > {output.gzip_dir}
+    imgtools dicomsort \
+    --action move \
+    {input.collection_dir} \
+    {output.sorted_dir}/%PatientID/%Modality_Series-%SeriesInstanceUID/
+
+    rm -rf {input.collection_dir}
     """
 
 rule summarize_metadata:
@@ -96,7 +107,7 @@ rule summarize_metadata:
 
 rule download_collection:
   output:
-    collection_dir = directory("procdata/{collection}"),
+    collection_dir = directory("procdata/unsorted/{collection}"),
     metadata_file = "metadata/{collection}.json"
   retries: 3
   log:
