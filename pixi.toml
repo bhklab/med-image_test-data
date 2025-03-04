@@ -7,9 +7,9 @@ platforms = ["linux-64"]
 version = "0.1.0"
 
 [tasks]
-tag = "bash ./scripts/tag.sh"
-snake = "snakemake  --show-failed-logs --printshellcmds --rerun-incomplete"
-clean = "rm -rf .snakemake rawdata procdata"
+tag = { cmd = "bash ./scripts/tag.sh", description = "Tags the current branch and pushes it to Github, setting off the release job. Only works on main branch and should only be run if pipeline is successful." }
+snake = { cmd = "snakemake  --show-failed-logs --printshellcmds --rerun-incomplete", description = "Run the snakemake pipeline" }
+clean = { cmd = "rm -rf .snakemake rawdata procdata", description = "Clean up the project directory" }
 
 [dependencies]
 python = ">=3.12,<3.13"
@@ -24,5 +24,5 @@ snakemake = ">=8.27.1,<9"
 ruff = "*"
 
 [pypi-dependencies]
-nbia-toolkit = { git = "https://github.com/jjjermiah/nbia-toolkit.git", branch = "jjjermiah/full_refactor"}
+nbia-toolkit = { git = "https://github.com/jjjermiah/nbia-toolkit.git", branch = "jjjermiah/full_refactor" }
 tcia_utils = "*"
