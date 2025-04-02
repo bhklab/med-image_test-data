@@ -11,6 +11,12 @@ if ACCESS_TYPE == "PUBLIC":
   configfile: "nbia_datasets.yaml"
 elif ACCESS_TYPE == "PRIVATE":
   configfile: "nbia_datasets_private.yaml"
+
+  NBIA_USERNAME: os.environ.get("NBIA_USERNAME", None)
+  NBIA_PASSWORD: os.environ.get("NBIA_PASSWORD", None)
+  print(f"NBIA_USERNAME: {NBIA_USERNAME}")
+  print(f"NBIA_PASSWORD: {NBIA_PASSWORD}")
+
 elif ACCESS_TYPE == "BOTH":
   import yaml
   # read both yaml files 
