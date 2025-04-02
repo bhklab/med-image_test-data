@@ -9,6 +9,7 @@ print(f"ACCESS_TYPE: {ACCESS_TYPE}")
 
 if ACCESS_TYPE == "PUBLIC":
   configfile: "nbia_datasets.yaml"
+  configfile: "nbia_datasets.yaml"
 elif ACCESS_TYPE == "PRIVATE":
   configfile: "nbia_datasets_private.yaml"
 
@@ -75,6 +76,8 @@ rule summarize_metadata:
     "workflow/scripts/summarize_metadata.py"
 
 rule download_collection:
+  input:
+    metadata_file = "metadata/{collection}.csv"
   input:
     metadata_file = "metadata/{collection}.csv"
   output:
