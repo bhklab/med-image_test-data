@@ -6,7 +6,7 @@ import warnings
 import zipfile
 from pathlib import Path
 from typing import TYPE_CHECKING
-
+import pandas as pd
 from nbiatoolkit import logger
 from nbiatoolkit.nbia import NBIAClient
 from nbiatoolkit.settings import Settings
@@ -20,72 +20,94 @@ if TYPE_CHECKING:
 warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
-async def download_multiple_series(
-    client: NBIAClient, SeriesInstanceUID: str
-) -> dict[str, bytes]:
-    data_task = client._downloadSeries(params={"SeriesInstanceUID": SeriesInstanceUID})
-    bytes_data = await data_task
-    return {SeriesInstanceUID: bytes_data}
+async def main(client: NBIAClient, series_list: pd.DataFrame, OUTPUT_DIR: Path):
+    # filter out series where the `FileSize` column is greater than 1GB
+    too_big = series_list[series_list["FileSize"] > 1_000_000_000]
+    logger.warning(
+        f"Found {len(too_big)} series with size greater than 1GB. Skipping them."
+    )
+    logger.warning(f"Too Big Series: {too_big.SeriesInstanceUID.tolist()}")
+    series_list = series_list[series_list["FileSize"] <= 1_000_000_000]
 
+    series_list = series_list.SeriesInstanceUID.unique()
 
-async def main(client: NBIAClient, series_list: list, OUTPUT_DIR: Path):
+    logger.info(f"Found {len(series_list)} series")
+
+    # Create a directory for each patient
+    for patient_id in metadata_df.PatientID.unique():
+        patient_dir = OUTPUT_DIR / patient_id
+        patient_dir.mkdir(parents=True, exist_ok=True)
+
+    # add a column for the path to the zip file
+    metadata_df["zip_file"] = metadata_df.apply(
+        lambda row: OUTPUT_DIR
+        / row.PatientID
+        / f"{row.Modality}_Series{row.SeriesInstanceUID[-8:]}.zip",
+        axis=1,
+    )
+    metadata_df.set_index("SeriesInstanceUID", inplace=True)
+
+    # Download the series
     tasks = []
+
+    async def series_map(series) -> dict[str:bytes]:
+        logger.info(f"Downloading {series}")
+        zip_data = await client._download_series(series)
+        return {series: zip_data}
+
     for series in series_list:
-        zip_file = (
-            OUTPUT_DIR / series["PatientID"] / f"{series['SeriesInstanceUID']}.zip"
-        )
-        if zip_file.exists():
-            logger.warning(f"Skipping {zip_file.name}")
+        if metadata_df.loc[series].zip_file.exists():
+            logger.warning(f"Skipping {series}")
             continue
-        tasks.append(download_multiple_series(client, series["SeriesInstanceUID"]))
+
+        # download the series
+        tasks.append(series_map(series))
 
     results = await asyncio.gather(*tasks)
+
     logger.info(f"Downloaded {len(results)} series")
     for result in results:
         for SeriesInstanceUID, zip_data in result.items():
-            series = next(
-                s for s in series_list if s["SeriesInstanceUID"] == SeriesInstanceUID
-            )
-            logger.info(f"Extracting {series['SeriesInstanceUID']}")
-            series_dir = OUTPUT_DIR / series["PatientID"] / SeriesInstanceUID
-            series_dir.mkdir(parents=True, exist_ok=True)
-            with zipfile.ZipFile(io.BytesIO(zip_data)) as z:
-                z.extractall(series_dir)
+            series = metadata_df.loc[SeriesInstanceUID]
+            logger.info(f"Extracting {SeriesInstanceUID}")
+            zip_file = series.zip_file
+            zip_file.parent.mkdir(parents=True, exist_ok=True)
+            with zipfile.ZipFile(zip_data) as z:
+                z.extractall(zip_file)
 
 
 if __name__ == "__main__":
     COLLECTION = snakemake.wildcards.collection
     config = snakemake.config["datasets"][COLLECTION]
-    METADATA_FILE = Path(snakemake.output["metadata_file"])
+    METADATA_FILE = Path(snakemake.input["metadata_file"])
     OUTPUT_DIR = Path(snakemake.output["collection_dir"])
     LOG_FILE = Path(snakemake.log[0])
 
     # add a file handler to the logger
     file_handler = logging.FileHandler(LOG_FILE)
+    # remove existing handlers
+    logger.handlers = []
     logger.addHandler(file_handler)
+    # format with log level and time
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    file_handler.setFormatter(formatter)
 
     # Your script logic here
     settings = Settings()
-    client = NBIAClient(
-        username=settings.login.nbia_username,
-        password=settings.login.nbia_password,
-    )
 
-    # print(config)
+    client = NBIAClient.from_settings(settings)
+    client.disable_progress_bar = True  # doesnt work right now lol
 
     # print(f"Downloading data for {COLLECTION}")
     logger.info(f"Downloading data for {COLLECTION}")
 
-    series_list = []
+    # Read the metadata file
+    metadata_df = pd.read_csv(METADATA_FILE)
 
-    for patient in config["patients"]:
-        params = {"PatientID": patient}
-        result = client.getSeries(params)
-        series_list.extend(result)
-    logger.info(f"Found {len(series_list)} series")
+    # json_file_content = json.dumps(series_list, indent=4)
+    # with METADATA_FILE.open("w") as f:
+    #     f.write(json_file_content)
 
-    json_file_content = json.dumps(series_list, indent=4)
-    with METADATA_FILE.open("w") as f:
-        f.write(json_file_content)
-
-    asyncio.run(main(client, series_list, OUTPUT_DIR))
+    asyncio.run(main(client, metadata_df, OUTPUT_DIR))

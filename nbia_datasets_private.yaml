@@ -4,6 +4,8 @@ datasets:
       # Maybe we should have 2 patients per institution for this dataset??
       - HN-HMR-011
       - HN-CHUS-027
+      - HN-CHUS-052 # from old test suite
+      - HN-CHUS-082 # from old test suite
       - HN-CHUM-051
       - HN-HGJ-033
   RADCURE:
