@@ -45,7 +45,8 @@ rule all:
     summaries = expand("results/summaries/{collection}_summary.md", collection=COLLECTION_NAMES),
     metadata_files = expand("metadata/{collection}.csv", collection=COLLECTION_NAMES)
   output:
-    "results/combined_summary.md",
+    combined_summary="results/combined_summary.md",
+    combined_metadata="results/combined_metadata.csv",
   script:
     "workflow/scripts/create_combined_summary.py"
 

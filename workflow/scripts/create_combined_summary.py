@@ -10,7 +10,8 @@ if TYPE_CHECKING:
 
 METADATA_FILES = [Path(f) for f in snakemake.input.metadata_files]
 SUMMARY_FILES = [Path(f) for f in snakemake.input.summaries]
-output_path = Path(snakemake.output[0])
+output_path = Path(snakemake.output.combined_summary)
+combined_metadata = Path(snakemake.output.combined_metadata)
 all_collection_modality_sets: dict[str, list[str]] = defaultdict(list)
 
 # Re-discover collection list (glob resets on full iteration)
@@ -60,3 +61,7 @@ with output_path.open("w") as f:
     for collection, content in summaries:
         f.write(content + "\n")
 
+# combine all csvs into one
+df = pd.concat([pd.read_csv(f) for f in METADATA_FILES], ignore_index=True, sort=False)
+df = df.drop_duplicates()
+df.to_csv(combined_metadata, index=False)

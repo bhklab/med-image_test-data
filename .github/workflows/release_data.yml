@@ -53,5 +53,6 @@ jobs:
         with:
           files: |
             ./results/*.tar.gz
+            ./results/combined_metadata.csv
           body_path: results/combined_summary.md
           make_latest: true
