@@ -1,9 +1,33 @@
 from collections import defaultdict
 import json
 import pandas as pd
-# snakefile to download data
-configfile: "nbia.yaml"
+
+import os
+
+ACCESS_TYPE = os.environ.get("ACCESS_TYPE", "public").upper()
+print(f"ACCESS_TYPE: {ACCESS_TYPE}")
+
+if ACCESS_TYPE == "PUBLIC":
+  configfile: "nbia.yaml"
+elif ACCESS_TYPE == "PRIVATE":
+  configfile: "nbia_private.yaml"
+elif ACCESS_TYPE == "BOTH":
+  import yaml
+  # read both yaml files 
+  with open("nbia.yaml") as public_file:
+    public_config = yaml.safe_load(public_file)
+
+  with open("nbia_private.yaml") as private_file:
+    private_config = yaml.safe_load(private_file)
+
+  # merge the two configs
+  config = public_config
+  config["datasets"].update(private_config["datasets"])
+else:
+  raise ValueError(f"Invalid ACCESS_TYPE: {ACCESS_TYPE}. Must be 'public' or 'private'.")
+
 COLLECTION_NAMES = list(config["datasets"].keys())
+print(f"COLLECTION_NAMES: {COLLECTION_NAMES}")
 rule all:
   input:
     expand("results/{collection}.tar.gz", collection=COLLECTION_NAMES),

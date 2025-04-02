@@ -19,12 +19,15 @@ jobs:
     env:
       NBIA_USERNAME: ${{ secrets.NBIA_USERNAME }}
       NBIA_PASSWORD: ${{ secrets.NBIA_PASSWORD }}
+      ACCESS_TYPE: ${{ vars.ACCESS_TYPE }}
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Display environment variables
         run: |
+          echo "ACCESS_TYPE is $ACCESS_TYPE"
+
           echo "NBIA_USERNAME is $NBIA_USERNAME"
           if [ -z "$NBIA_PASSWORD" ]; then
             echo "NBIA_PASSWORD is not set"

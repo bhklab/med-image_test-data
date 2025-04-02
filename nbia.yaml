@@ -15,9 +15,6 @@ datasets:
   # Causing some issues with the downloaded files
     patients:
       - CCTH-A01
-      # - CCTH-A02
-      # - CCTH-B11
-  # HNSCC-3DCT-RT: Need a login
   Soft-tissue-Sarcoma:
     patients:
       - STS_001
@@ -38,6 +35,7 @@ datasets:
     patients:
       - LIDC-IDRI-0340
       - LIDC-IDRI-0151
+      - LIDC-IDRI-0068
   Mediastinal-Lymph-Node-SEG:
     patients:
       - case_0002
