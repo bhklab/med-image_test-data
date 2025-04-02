@@ -12,10 +12,13 @@ if ACCESS_TYPE == "PUBLIC":
 elif ACCESS_TYPE == "PRIVATE":
   configfile: "nbia_datasets_private.yaml"
 
-  NBIA_USERNAME: os.environ.get("NBIA_USERNAME", None)
-  NBIA_PASSWORD: os.environ.get("NBIA_PASSWORD", None)
-  print(f"NBIA_USERNAME: {NBIA_USERNAME}")
-  print(f"NBIA_PASSWORD: {NBIA_PASSWORD}")
+  NBIA_USERNAME = os.environ.get("NBIA_USERNAME", None)
+  NBIA_PASSWORD =  os.environ.get("NBIA_PASSWORD", None)
+  if NBIA_USERNAME is None or NBIA_PASSWORD is None:
+    raise ValueError("NBIA_USERNAME and NBIA_PASSWORD must be set for private access.")
+
+  os.environ["LOGIN__NBIA_USERNAME"] = NBIA_USERNAME
+  os.environ["LOGIN__NBIA_PASSWORD"] = NBIA_PASSWORD
 
 elif ACCESS_TYPE == "BOTH":
   import yaml
@@ -39,7 +42,7 @@ print(f"COLLECTION_NAMES: {COLLECTION_NAMES}")
 rule all:
   input:
     collection_data = expand("results/{collection}.tar.gz", collection=COLLECTION_NAMES),
-    # expand("results/summaries/{collection}_summary.md", collection=COLLECTION_NAMES),
+    summaries = expand("results/summaries/{collection}_summary.md", collection=COLLECTION_NAMES),
     metadata_files = expand("metadata/{collection}.csv", collection=COLLECTION_NAMES)
   output:
     "results/combined_summary.md",
@@ -61,6 +64,14 @@ rule compress:
     # uses -cf to create a new tar file
     # uses --exclude to exclude the .snakemake_timestamp file (because we use the 'directory' function in snakemake)
     # then pipes the output to pigz to compress it
+
+rule summarize_metadata:
+  input:
+    metadata_file = "metadata/{collection}.csv"
+  output:
+    summary_file = "results/summaries/{collection}_summary.md"
+  script:
+    "workflow/scripts/summarize_metadata.py"
 
 rule download_collection:
   input:
