@@ -21,7 +21,15 @@ warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
 async def main(client: NBIAClient, series_list: pd.DataFrame, OUTPUT_DIR: Path):
-    series_list = metadata_df.SeriesInstanceUID.unique()
+    # filter out series where the `FileSize` column is greater than 1GB
+    too_big = series_list[series_list["FileSize"] > 1_000_000_000]
+    logger.warning(
+        f"Found {len(too_big)} series with size greater than 1GB. Skipping them."
+    )
+    logger.warning(f"Too Big Series: {too_big.SeriesInstanceUID.tolist()}")
+    series_list = series_list[series_list["FileSize"] <= 1_000_000_000]
+
+    series_list = series_list.SeriesInstanceUID.unique()
 
     logger.info(f"Found {len(series_list)} series")
 
@@ -32,14 +40,17 @@ async def main(client: NBIAClient, series_list: pd.DataFrame, OUTPUT_DIR: Path):
 
     # add a column for the path to the zip file
     metadata_df["zip_file"] = metadata_df.apply(
-        lambda row: OUTPUT_DIR / row.PatientID / f"{row.Modality}_Series{row.SeriesInstanceUID[-8:]}.zip", axis=1
+        lambda row: OUTPUT_DIR
+        / row.PatientID
+        / f"{row.Modality}_Series{row.SeriesInstanceUID[-8:]}.zip",
+        axis=1,
     )
     metadata_df.set_index("SeriesInstanceUID", inplace=True)
 
     # Download the series
     tasks = []
 
-    async def series_map(series)-> dict[str: bytes]:
+    async def series_map(series) -> dict[str:bytes]:
         logger.info(f"Downloading {series}")
         zip_data = await client._download_series(series)
         return {series: zip_data}
@@ -64,6 +75,7 @@ async def main(client: NBIAClient, series_list: pd.DataFrame, OUTPUT_DIR: Path):
             with zipfile.ZipFile(zip_data) as z:
                 z.extractall(zip_file)
 
+
 if __name__ == "__main__":
     COLLECTION = snakemake.wildcards.collection
     config = snakemake.config["datasets"][COLLECTION]
@@ -86,7 +98,7 @@ if __name__ == "__main__":
     settings = Settings()
 
     client = NBIAClient.from_settings(settings)
-    client.disable_progress_bar = True # doesnt work right now lol
+    client.disable_progress_bar = True  # doesnt work right now lol
 
     # print(f"Downloading data for {COLLECTION}")
     logger.info(f"Downloading data for {COLLECTION}")
