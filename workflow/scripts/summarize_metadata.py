@@ -2,16 +2,17 @@ import json
 from collections import defaultdict
 from pathlib import Path
 from typing import TYPE_CHECKING
+import pandas as pd
 
 if TYPE_CHECKING:
     from snakemake.script import snakemake  # type: ignore
 
 # Load JSON data
-json_file = Path(snakemake.input["metadata_file"])
+csv_file = Path(snakemake.input["metadata_file"])
 output_file = Path(snakemake.output["summary_file"])
 collection_name = snakemake.wildcards.collection
-with open(json_file, "r") as f:
-    data = json.load(f)
+with open(csv_file, "r") as f:
+    data = pd.read_csv(f).to_dict(orient="records")
 
 # Aggregate data
 summary = defaultdict(lambda: defaultdict(int))
@@ -37,7 +38,6 @@ for patient_id, modalities in summary.items():
             rows.append(f"| {patient_id:<20} | {modality:<9} | {count:<19} |")
         else:
             rows.append(f"| {'':<20} | {modality:<9} | {count:<19} |")
-
 
 
 # Combine header and rows
