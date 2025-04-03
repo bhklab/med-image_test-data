@@ -39,7 +39,7 @@ datasets:
       - Adrenal_Ki67_Seg_004
   ISPY2:
     PatientID:
-      - ISPY2-102011 # 39 series
+      # - ISPY2-102011 # 39 series
       - ISPY2-111038 # 32 series
   # these patient have too many series
   # so we only want the specific study to make it smaller

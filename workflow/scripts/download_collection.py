@@ -1,6 +1,4 @@
 import asyncio
-import io
-import json
 import logging
 import warnings
 import zipfile
@@ -10,7 +8,6 @@ import pandas as pd
 from nbiatoolkit import logger
 from nbiatoolkit.nbia import NBIAClient
 from nbiatoolkit.settings import Settings
-from rich import print
 
 if TYPE_CHECKING:
     from snakemake.script import snakemake  # type: ignore
@@ -26,12 +23,24 @@ async def download_and_extract_series(
     """Download and extract a series in one operation to save memory."""
     logger.info(f"Downloading {series}")
     try:
-
         zip_data = await client._download_series(series)
         logger.info(f"Extracting {series}")
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with zipfile.ZipFile(zip_data) as z:
-            z.extractall(output_path)
+            members = z.namelist()
+            filtered_members = [
+                name
+                for name in members
+                if not name.endswith(".csv") and "LICENSE" not in name
+            ]
+            skipped_files = set(members) - set(filtered_members)
+            if skipped_files:
+                logger.warning(
+                    f"Skipped files: {', '.join(skipped_files)} in series {series}"
+                )
+
+            for member in filtered_members:
+                z.extract(member, output_path)
         return True
     except Exception as e:
         logger.error(f"Error processing series {series}: {e}")
@@ -80,7 +89,6 @@ async def main(client: NBIAClient, series_list: pd.DataFrame, OUTPUT_DIR: Path):
                 client, series, metadata_df.loc[series].zip_file
             )
         )
-
 
     results = await asyncio.gather(*tasks)
 

@@ -44,7 +44,7 @@ if __name__ == "__main__":
     client.disable_progress_bar = True  # doesnt work right now lol
 
     param_list = []
-
+    logger.info(f"Config: {config}")
     for key in config:
         # could be PatientID, StudyInstanceUID, SeriesInstanceUID
         assert key in [
@@ -54,12 +54,12 @@ if __name__ == "__main__":
         ], (
             f"Invalid key {key} in config. Expected one of PatientID, StudyInstanceUID, SeriesInstanceUID"
         )
-        param_list.append({key: identifier for identifier in config[key]})
-
-    # param_list = [
-    #     {"PatientID": patient}
-    #     for patient in config["patients"]
-    # ]
+        # param_list.append({key: identifier for identifier in config[key]})
+        logger.info(f"Key: {key}")
+        logger.info(f"Identifiers: {config[key]}")
+        for identifier in config[key]:
+            param_list.append({key: identifier})
+    logger.info(f"Querying with {param_list}")
 
     series = client.getSeries(param_list)
 
