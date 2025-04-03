@@ -41,12 +41,25 @@ if __name__ == "__main__":
     settings = Settings()
 
     client = NBIAClient.from_settings(settings)
-    client.disable_progress_bar = True # doesnt work right now lol
+    client.disable_progress_bar = True  # doesnt work right now lol
 
-    param_list = [
-        {"PatientID": patient}
-        for patient in config["patients"]
-    ]
+    param_list = []
+
+    for key in config:
+        # could be PatientID, StudyInstanceUID, SeriesInstanceUID
+        assert key in [
+            "PatientID",
+            "StudyInstanceUID",
+            "SeriesInstanceUID",
+        ], (
+            f"Invalid key {key} in config. Expected one of PatientID, StudyInstanceUID, SeriesInstanceUID"
+        )
+        param_list.append({key: identifier for identifier in config[key]})
+
+    # param_list = [
+    #     {"PatientID": patient}
+    #     for patient in config["patients"]
+    # ]
 
     series = client.getSeries(param_list)
 

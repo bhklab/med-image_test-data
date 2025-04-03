@@ -1,7 +1,7 @@
 datasets:
   Head-Neck-PET-CT:
-    patients:
-      # Maybe we should have 2 patients per institution for this dataset??
+    PatientID:
+      # Maybe we should have 2 PatientID per institution for this dataset??
       - HN-HMR-011
       - HN-CHUS-027
       - HN-CHUS-052 # from old test suite
@@ -9,27 +9,27 @@ datasets:
       - HN-CHUM-051
       - HN-HGJ-033
   RADCURE:
-    patients:
+    PatientID:
       - RADCURE-0009
       - RADCURE-0012
-  # QIN-HEADNECK:
-  #   patients:
-  #     - QIN-HEADNECK-01-0003
-  #     - QIN-HEADNECK-01-0065
+  QIN-HEADNECK:
+    PatientID:
+      - QIN-HEADNECK-01-0003
+      # - QIN-HEADNECK-01-0065
   HNSCC-3DCT-RT:
-    patients:
+    PatientID:
       - HN_P001
       - HN_P003
   HEAD-NECK-RADIOMICS-HN1:
-    patients:
+    PatientID:
       - HN1004
       - HN1022
-  # TCGA-HNSC:
-  #   patients:
-  #     - TCGA-CV-A6K2
-  #     - TCGA-CV-A6JY
+  TCGA-HNSC:
+    PatientID:
+      - TCGA-CV-A6K2
+      # - TCGA-CV-A6JY
   HNSCC:
-    patients:
+    PatientID:
       - HNSCC-01-0151
       - HNSCC-01-0146
       - HNSCC-01-0176

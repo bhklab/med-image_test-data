@@ -42,7 +42,7 @@ async def main(client: NBIAClient, series_list: pd.DataFrame, OUTPUT_DIR: Path):
     metadata_df["zip_file"] = metadata_df.apply(
         lambda row: OUTPUT_DIR
         / row.PatientID
-        / f"{row.Modality}_Series{row.SeriesInstanceUID[-8:]}.zip",
+        / f"{row.Modality}_Series{row.SeriesInstanceUID[-8:]}",
         axis=1,
     )
     metadata_df.set_index("SeriesInstanceUID", inplace=True)
