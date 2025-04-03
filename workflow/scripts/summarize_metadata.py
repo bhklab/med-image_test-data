@@ -45,4 +45,3 @@ markdown_output = header + "\n".join(rows) + "\n"
 
 # Save Markdown output
 output_file.write_text(markdown_output)
-print(f"Summary written to {output_file}")

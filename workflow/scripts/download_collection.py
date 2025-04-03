@@ -20,6 +20,23 @@ if TYPE_CHECKING:
 warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
+async def download_and_extract_series(
+    client: NBIAClient, series: str, output_path: Path
+) -> bool:
+    """Download and extract a series in one operation to save memory."""
+    logger.info(f"Downloading {series}")
+    try:
+        zip_data = await client._download_series(series)
+        logger.info(f"Extracting {series}")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(io.BytesIO(zip_data)) as z:
+            z.extractall(output_path)
+        return True
+    except Exception as e:
+        logger.error(f"Error processing series {series}: {e}")
+        return False
+
+
 async def main(client: NBIAClient, series_list: pd.DataFrame, OUTPUT_DIR: Path):
     # filter out series where the `FileSize` column is greater than 1GB
     too_big = series_list[series_list["FileSize"] > 1_000_000_000]
@@ -47,33 +64,27 @@ async def main(client: NBIAClient, series_list: pd.DataFrame, OUTPUT_DIR: Path):
     )
     metadata_df.set_index("SeriesInstanceUID", inplace=True)
 
-    # Download the series
+    # Download and extract the series concurrently
     tasks = []
-
-    async def series_map(series) -> dict[str:bytes]:
-        logger.info(f"Downloading {series}")
-        zip_data = await client._download_series(series)
-        return {series: zip_data}
 
     for series in series_list:
         if metadata_df.loc[series].zip_file.exists():
             logger.warning(f"Skipping {series}")
             continue
 
-        # download the series
-        tasks.append(series_map(series))
+        # Download and extract the series in one go
+        tasks.append(
+            download_and_extract_series(
+                client, series, metadata_df.loc[series].zip_file
+            )
+        )
 
     results = await asyncio.gather(*tasks)
 
-    logger.info(f"Downloaded {len(results)} series")
-    for result in results:
-        for SeriesInstanceUID, zip_data in result.items():
-            series = metadata_df.loc[SeriesInstanceUID]
-            logger.info(f"Extracting {SeriesInstanceUID}")
-            zip_file = series.zip_file
-            zip_file.parent.mkdir(parents=True, exist_ok=True)
-            with zipfile.ZipFile(zip_data) as z:
-                z.extractall(zip_file)
+    successful_downloads = sum(results)
+    logger.info(
+        f"Successfully processed {successful_downloads} out of {len(tasks)} series"
+    )
 
 
 if __name__ == "__main__":

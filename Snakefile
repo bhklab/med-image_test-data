@@ -81,7 +81,7 @@ rule download_collection:
   input:
     metadata_file = "metadata/{collection}.csv"
   output:
-    collection_dir = directory("procdata/{collection}"),
+    collection_dir = temp(directory("procdata/{collection}")),
   log:
     "logs/download_collection/download_{collection}.log"
   retries: 3
