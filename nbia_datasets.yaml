@@ -11,17 +11,10 @@ datasets:
     PatientID:
       - PCAMPMRI-00001
       - PCAMPMRI-00002
-  CC-Tumor-Heterogeneity:
-  # Causing some issues with the downloaded files
-    PatientID:
-      - CCTH-A01
   Soft-tissue-Sarcoma:
     PatientID:
       - STS_001
       - STS_002
-  4D-Lung:
-    PatientID:
-      - 113_HM10395 # 120 series... should find a way to subset to studies
   NSCLC_Radiogenomics:
     PatientID:
       - R01-001
@@ -48,3 +41,16 @@ datasets:
     PatientID:
       - ISPY2-102011 # 39 series
       - ISPY2-111038 # 32 series
+  # these patient have too many series
+  # so we only want the specific study to make it smaller
+  4D-Lung:
+    # PatientID:
+      # - 113_HM10395 
+    StudyInstanceUID:
+      - '1.3.6.1.4.1.14519.5.2.1.6834.5010.256044453973110512988792912989'
+  CC-Tumor-Heterogeneity:
+  # Causing some issues with the downloaded files
+    # PatientID:
+    #   - CCTH-A01
+    StudyInstanceUID:
+    - '1.3.6.1.4.1.14519.5.2.1.331759366792756327296606233801322964986'
