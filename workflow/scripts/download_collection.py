@@ -26,10 +26,11 @@ async def download_and_extract_series(
     """Download and extract a series in one operation to save memory."""
     logger.info(f"Downloading {series}")
     try:
+
         zip_data = await client._download_series(series)
         logger.info(f"Extracting {series}")
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        with zipfile.ZipFile(io.BytesIO(zip_data)) as z:
+        with zipfile.ZipFile(zip_data) as z:
             z.extractall(output_path)
         return True
     except Exception as e:
@@ -40,10 +41,11 @@ async def download_and_extract_series(
 async def main(client: NBIAClient, series_list: pd.DataFrame, OUTPUT_DIR: Path):
     # filter out series where the `FileSize` column is greater than 1GB
     too_big = series_list[series_list["FileSize"] > 1_000_000_000]
-    logger.warning(
-        f"Found {len(too_big)} series with size greater than 1GB. Skipping them."
-    )
-    logger.warning(f"Too Big Series: {too_big.SeriesInstanceUID.tolist()}")
+    if len(too_big) > 0:
+        logger.warning(
+            f"Found {len(too_big)} series with size greater than 1GB. Skipping them."
+        )
+        logger.warning(f"Too Big Series: {too_big.SeriesInstanceUID.tolist()}")
     series_list = series_list[series_list["FileSize"] <= 1_000_000_000]
 
     series_list = series_list.SeriesInstanceUID.unique()
@@ -79,8 +81,15 @@ async def main(client: NBIAClient, series_list: pd.DataFrame, OUTPUT_DIR: Path):
             )
         )
 
+
     results = await asyncio.gather(*tasks)
 
+    for result in results:
+        if result is False:
+            logger.error("Failed to download series something ")
+            import sys
+
+            sys.exit(1)
     successful_downloads = sum(results)
     logger.info(
         f"Successfully processed {successful_downloads} out of {len(tasks)} series"

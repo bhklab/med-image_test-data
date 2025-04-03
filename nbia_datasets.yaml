@@ -3,48 +3,48 @@ datasets:
     PatientID:
       - VS-SEG-001
       - VS-SEG-002
-  NSCLC-Radiomics:
-    PatientID:
-      - LUNG1-001
-      - LUNG1-002
-  QIN-PROSTATE-Repeatability:
-    PatientID:
-      - PCAMPMRI-00001
-      - PCAMPMRI-00002
-  CC-Tumor-Heterogeneity:
-  # Causing some issues with the downloaded files
-    PatientID:
-      - CCTH-A01
-  Soft-tissue-Sarcoma:
-    PatientID:
-      - STS_001
-      - STS_002
-  4D-Lung:
-    PatientID:
-      - 113_HM10395 # 120 series... should find a way to subset to studies
-  NSCLC_Radiogenomics:
-    PatientID:
-      - R01-001
-      - R01-039
-      - R01-050
-  Prostate-Anatomical-Edge-Cases:
-    PatientID:
-      - Prostate-AEC-001
-      - Prostate-AEC-002
-  LIDC-IDRI:
-    PatientID:
-      - LIDC-IDRI-0340
-      - LIDC-IDRI-0151
-      - LIDC-IDRI-0068
-  Mediastinal-Lymph-Node-SEG:
-    PatientID:
-      - case_0002
-      - case_0005
-  Adrenal-ACC-Ki67-Seg:
-    PatientID:
-      - Adrenal_Ki67_Seg_002
-      - Adrenal_Ki67_Seg_004
-  ISPY2:
-    PatientID:
-      - ISPY2-102011 # 39 series
-      - ISPY2-111038 # 32 series
+  # NSCLC-Radiomics:
+  #   PatientID:
+  #     - LUNG1-001
+  #     - LUNG1-002
+  # QIN-PROSTATE-Repeatability:
+  #   PatientID:
+  #     - PCAMPMRI-00001
+  #     - PCAMPMRI-00002
+  # CC-Tumor-Heterogeneity:
+  # # Causing some issues with the downloaded files
+  #   PatientID:
+  #     - CCTH-A01
+  # Soft-tissue-Sarcoma:
+  #   PatientID:
+  #     - STS_001
+  #     - STS_002
+  # 4D-Lung:
+  #   PatientID:
+  #     - 113_HM10395 # 120 series... should find a way to subset to studies
+  # NSCLC_Radiogenomics:
+  #   PatientID:
+  #     - R01-001
+  #     - R01-039
+  #     - R01-050
+  # Prostate-Anatomical-Edge-Cases:
+  #   PatientID:
+  #     - Prostate-AEC-001
+  #     - Prostate-AEC-002
+  # LIDC-IDRI:
+  #   PatientID:
+  #     - LIDC-IDRI-0340
+  #     - LIDC-IDRI-0151
+  #     - LIDC-IDRI-0068
+  # Mediastinal-Lymph-Node-SEG:
+  #   PatientID:
+  #     - case_0002
+  #     - case_0005
+  # Adrenal-ACC-Ki67-Seg:
+  #   PatientID:
+  #     - Adrenal_Ki67_Seg_002
+  #     - Adrenal_Ki67_Seg_004
+  # ISPY2:
+  #   PatientID:
+  #     - ISPY2-102011 # 39 series
+  #     - ISPY2-111038 # 32 series
