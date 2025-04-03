@@ -60,12 +60,19 @@ rule compress:
     """
     INPUT_DIR=$(dirname {input.collection_dir})
     tar --exclude='.snakemake_timestamp' -C $INPUT_DIR -cf - {wildcards.collection} | pigz -9 -c > {output.gzip_dir}
+    if [ $? -eq 0 ]; then
+      rm -rf {input.collection_dir}
+    else
+      echo "Compression failed"
+      exit 1
+    fi
     """
     # this command will first tar the directory
     # uses -C to change to the directory
     # uses -cf to create a new tar file
     # uses --exclude to exclude the .snakemake_timestamp file (because we use the 'directory' function in snakemake)
     # then pipes the output to pigz to compress it
+    # if successful, remove the original directory
 
 rule summarize_metadata:
   input:
@@ -81,7 +88,7 @@ rule download_collection:
   input:
     metadata_file = "metadata/{collection}.csv"
   output:
-    collection_dir = temp(directory("procdata/{collection}")),
+    collection_dir = directory("procdata/{collection}"),
   log:
     "logs/download_collection/download_{collection}.log"
   retries: 3
