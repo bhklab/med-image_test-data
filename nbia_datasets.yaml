@@ -15,10 +15,17 @@ datasets:
     PatientID:
       - ABD_LYMPH_002
       - ABD_LYMPH_001
-  Vestibular-Schwannoma-SEG:
+  CPTAC-CCRCC:
     PatientID:
-      - VS-SEG-001
-      - VS-SEG-002
+      - C3N-00832
+  CPTAC-UCEC:
+    PatientID:
+      - C3L-02403
+      - C3L-00947
+  CPTAC-PDA:
+    PatientID:
+      - C3N-00198
+      - C3L-02610
   NSCLC-Radiomics:
     PatientID:
       - LUNG1-001
@@ -68,9 +75,11 @@ datasets:
   Spine-Mets-CT-SEG:
     PatientID:
       - "10250"
-      - "10352"
       - "15094"
-
+  Vestibular-Schwannoma-SEG:
+    PatientID:
+      - VS-SEG-001
+      - VS-SEG-002
   # these patient have too many series
   # so we only want the specific study to make it smaller
   4D-Lung:
