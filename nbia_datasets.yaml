@@ -11,7 +11,7 @@ datasets:
     PatientID:
       - CRLM-CT-1001
       - CRLM-CT-1002
-  CT-Lymph-Nodes:
+  CT_Lymph_Nodes:
     PatientID:
       - ABD_LYMPH_002
       - ABD_LYMPH_001
