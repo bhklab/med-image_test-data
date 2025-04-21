@@ -1,20 +1,44 @@
 datasets:
-  Vestibular-Schwannoma-SEG:
+  Adrenal-ACC-Ki67-Seg:
     PatientID:
-      - VS-SEG-001
-      - VS-SEG-002
+      - Adrenal_Ki67_Seg_002
+      - Adrenal_Ki67_Seg_004
+  C4KC-KiTS:
+    PatientID:
+      - KiTS-00008
+      - KiTS-00012
+  Colorectal-Liver-Metastases:
+    PatientID:
+      - CRLM-CT-1001
+      - CRLM-CT-1002
+  CT-Lymph-Nodes:
+    PatientID:
+      - ABD_LYMPH_002
+      - ABD_LYMPH_001
+  CPTAC-CCRCC:
+    PatientID:
+      - C3N-00832
+  CPTAC-UCEC:
+    PatientID:
+      - C3L-02403
+      - C3L-00947
+  CPTAC-PDA:
+    PatientID:
+      - C3N-00198
+      - C3L-02610
   NSCLC-Radiomics:
     PatientID:
       - LUNG1-001
       - LUNG1-002
-  QIN-PROSTATE-Repeatability:
+  LIDC-IDRI:
     PatientID:
-      - PCAMPMRI-00001
-      - PCAMPMRI-00002
-  Soft-tissue-Sarcoma:
+      - LIDC-IDRI-0340
+      - LIDC-IDRI-0151
+      - LIDC-IDRI-0068
+  NSCLC-Radiomics-Interobserver1:
     PatientID:
-      - STS_001
-      - STS_002
+      - interobs05
+      - interobs06
   NSCLC_Radiogenomics:
     PatientID:
       - R01-001
@@ -24,33 +48,49 @@ datasets:
     PatientID:
       - Prostate-AEC-001
       - Prostate-AEC-002
-  LIDC-IDRI:
-    PatientID:
-      - LIDC-IDRI-0340
-      - LIDC-IDRI-0151
-      - LIDC-IDRI-0068
   Mediastinal-Lymph-Node-SEG:
     PatientID:
       - case_0002
       - case_0005
-  Adrenal-ACC-Ki67-Seg:
+  Pancreatic-CT-CBCT-SEG:
     PatientID:
-      - Adrenal_Ki67_Seg_002
-      - Adrenal_Ki67_Seg_004
-  ISPY2:
+      - Pancreas-CT-CB_003
+      - Pancreas-CT-CB_006
+  Pediatric-CT-SEG:
     PatientID:
-      # - ISPY2-102011 # 39 series
-      - ISPY2-111038 # 32 series
+      - Pediatric-CT-SEG-028C9198
+      - Pediatric-CT-SEG-018B687C
+  QIN-PROSTATE-Repeatability:
+    PatientID:
+      - PCAMPMRI-00001
+      - PCAMPMRI-00002
+  ReMIND:
+    PatientID:
+      - ReMIND-031
+      - ReMIND-077
+  Soft-tissue-Sarcoma:
+    PatientID:
+      - STS_001
+      - STS_002
+  Spine-Mets-CT-SEG:
+    PatientID:
+      - "10250"
+      - "15094"
+  Vestibular-Schwannoma-SEG:
+    PatientID:
+      - VS-SEG-001
+      - VS-SEG-002
   # these patient have too many series
   # so we only want the specific study to make it smaller
   4D-Lung:
-    # PatientID:
-      # - 113_HM10395 
     StudyInstanceUID:
-      - '1.3.6.1.4.1.14519.5.2.1.6834.5010.256044453973110512988792912989'
+      - "1.3.6.1.4.1.14519.5.2.1.6834.5010.256044453973110512988792912989"
   CC-Tumor-Heterogeneity:
-  # Causing some issues with the downloaded files
-    # PatientID:
-    #   - CCTH-A01
     StudyInstanceUID:
-    - '1.3.6.1.4.1.14519.5.2.1.331759366792756327296606233801322964986'
+      - "1.3.6.1.4.1.14519.5.2.1.331759366792756327296606233801322964986"
+# April 21, removed ISPY because it incorrectly implemented the
+# DICOM standard
+# ISPY2:
+#   PatientID:
+#     # - ISPY2-102011 # 39 series
+#     - ISPY2-111038 # 32 series

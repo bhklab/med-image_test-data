@@ -61,7 +61,7 @@ rule compress:
     INPUT_DIR=$(dirname {input.collection_dir})
     tar --exclude='.snakemake_timestamp' -C $INPUT_DIR -cf - {wildcards.collection} | pigz -9 -c > {output.gzip_dir}
     if [ $? -eq 0 ]; then
-      rm -rf {input.collection_dir}
+      rm -rf "{input.collection_dir}"
     else
       echo "Compression failed"
       exit 1

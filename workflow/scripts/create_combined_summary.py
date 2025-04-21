@@ -36,13 +36,31 @@ cols = priority_modalities + [
 ]
 
 # Create DataFrame
+modality_counts = defaultdict(int)
+seen = set()
+
 df = pd.DataFrame(index=all_collection_modality_sets.keys(), columns=cols)
+# drop duplicates
+df = df.drop_duplicates()
+
 for collection, modalities in all_collection_modality_sets.items():
     for modality in modalities:
-        df.at[collection, modality] = modalities.count(modality)
+        count = modalities.count(modality)
+        df.at[collection, modality] = count
+
+        if (collection, modality) not in seen:
+            modality_counts[modality] += count
+            seen.add((collection, modality))
 
 df.sort_index(inplace=True)
 df.fillna("", inplace=True)
+
+for modality in modality_counts:
+    if modality in df.columns:
+        df.at["Total", modality] = modality_counts[modality]
+    else:
+        df.at["Total", modality] = 0
+
 
 # Append summaries
 summaries = []
