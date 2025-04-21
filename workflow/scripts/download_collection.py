@@ -63,14 +63,14 @@ async def main(client: NBIAClient, series_list: pd.DataFrame, OUTPUT_DIR: Path):
 
     # Create a directory for each patient
     for patient_id in metadata_df.PatientID.unique():
-        patient_dir = OUTPUT_DIR / patient_id
+        patient_dir = OUTPUT_DIR / f"{patient_id}"
         patient_dir.mkdir(parents=True, exist_ok=True)
 
     # add a column for the path to the zip file
     metadata_df["zip_file"] = metadata_df.apply(
         lambda row: OUTPUT_DIR
-        / row.PatientID
-        / f"{row.Modality}_Series{row.SeriesInstanceUID[-8:]}",
+        / f"{str(row.PatientID)}"
+        / f"{row.Modality}_Series-{row.SeriesInstanceUID[-8:]}",
         axis=1,
     )
     metadata_df.set_index("SeriesInstanceUID", inplace=True)
