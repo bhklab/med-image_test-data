@@ -3,7 +3,7 @@ authors = ["Jermiah <jermiahjoseph98@gmail.com>"]
 channels = ["conda-forge", "bioconda"]
 description = "Add a short description here"
 name = "med-image_test-data"
-platforms = ["linux-64"]
+platforms = ["linux-64", "osx-64"]
 version = "0.1.0"
 
 [tasks]
